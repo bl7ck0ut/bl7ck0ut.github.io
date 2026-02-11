@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Pages on Threat Research &amp; RevEng</title>
+    <title>Pages on bl7ck0ut</title>
     <link>https://bl7ck0ut.github.io/pages/</link>
-    <description>Recent content in Pages on Threat Research &amp; RevEng</description>
+    <description>Recent content in Pages on bl7ck0ut</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-gb</language><atom:link href="https://bl7ck0ut.github.io/pages/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language><atom:link href="https://bl7ck0ut.github.io/pages/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>About</title>
       <link>https://bl7ck0ut.github.io/pages/about/</link>
@@ -13,16 +13,9 @@
       
       <guid>https://bl7ck0ut.github.io/pages/about/</guid>
       
-      <description>&lt;p&gt;Written in Go, Hugo is an open source static site generator available under the &lt;a href=&#34;https://github.com/gohugoio/hugo/blob/master/LICENSE&#34;&gt;Apache Licence 2.0.&lt;/a&gt; Hugo supports TOML, YAML and JSON data file types, Markdown and HTML content files and uses shortcodes to add rich content. Other notable features are taxonomies, multilingual mode, image processing, custom output formats, HTML/CSS/JS minification and support for Sass SCSS workflows.&lt;/p&gt;
-&lt;p&gt;Hugo makes use of a variety of open source projects including:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/yuin/goldmark&#34;&gt;https://github.com/yuin/goldmark&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/alecthomas/chroma&#34;&gt;https://github.com/alecthomas/chroma&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/muesli/smartcrop&#34;&gt;https://github.com/muesli/smartcrop&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/spf13/cobra&#34;&gt;https://github.com/spf13/cobra&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/spf13/viper&#34;&gt;https://github.com/spf13/viper&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Hugo is ideal for blogs, corporate websites, creative portfolios, online magazines, single page applications or even a website with thousands of pages.&lt;/p&gt;</description>
+      <description>&lt;p&gt;I’m one of those odd people who genuinely finds staring at assembly code strangely hypnotising. I’ve spent the last 5+ working in security, starting out in incident response before falling down the malware analysis rabbit hole.&lt;/p&gt;
+&lt;p&gt;Now, I&amp;rsquo;m pretty much interested in the malware analysis &amp;amp; reverse engineering side of things. I built this site to document what I’m learning along the way.&lt;/p&gt;
+&lt;p&gt;Also, feel free to get in touch via &lt;a href=&#34;https://linkedin.com/in/bhaveshkumarlohar/&#34;&gt;LinkedIn&lt;/a&gt;.&lt;/p&gt;</description>
       
     </item>
     
