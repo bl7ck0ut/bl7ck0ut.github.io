@@ -1,19 +1,135 @@
 /* Updated contents for static/css/custom.css */
-
 /* Target the specific classes used by hugo-blog-awesome */
-.author .author-avatar {
+
+/*.author .author-avatar { */
     /* Use !important to ensure we override the theme's compiled SCSS */
-    width: 200px !important;  /* Set to your desired size */
-    height: 200px !important; /* Keep height equal to width for a circle */
+    /* width: 200px !important;  /* Set to your desired size */
+  /*  height: 200px !important; Keep height equal to width for a circle */
     
     /* The theme usually handles border-radius, but we can ensure it stays circular */
-    border-radius: 50%;
-}
+    /* border-radius: 50%;
+} */
 
 /* Optional: Adjust for smaller mobile screens so it doesn't take up too much space */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
     .author .author-avatar {
         width: 150px !important;
         height: 150px !important;
     }
+} */
+
+/* --- 1. Base Styles (LIGHT MODE) --- */
+.author .author-avatar {
+    /* Existing Size & Shape */
+    width: 200px !important;
+    height: 200px !important;
+    border-radius: 50%;
+    
+    /* NEW: Dark Border for Light Mode */
+    border: 3px solid #69b5de; 
+    
+    /* Animation Setup */
+    transition: transform 0.3s ease-in-out, border-color 0.3s ease;
+}
+
+/* --- 2. Dark Mode Override --- */
+html.dark .author .author-avatar {
+    /* NEW: White Border for Dark Mode */
+    border-color: #efe9e9;
+}
+
+/* --- 3. Hover Effect (Zoom) --- */
+.author .author-avatar:hover {
+    transform: scale(1.1);
+    /* Optional: Add a shadow when hovering to make it lift up */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* --- 4. Mobile Adjustments --- */
+@media (max-width: 768px) {
+    .author .author-avatar {
+        width: 150px !important;
+        height: 150px !important;
+        border-width: 3px; /* Slightly thinner border on mobile */
+    }
+}
+
+/* 1. Target links (a) and buttons in the navbar */
+.navbar a:active, 
+.navbar button:active,
+.navbar a:focus, 
+.navbar button:focus {
+    
+    /* Removes the border/outline box */
+    outline: none !important;
+    border: none !important;
+
+    /* Removes the solid blue square background */
+    background-color: transparent !important;
+
+    /* Optional: Keeps the text color normal (instead of turning blue) */
+    color: inherit !important; 
+}
+
+
+/* 1. Container for the text (No border, no animation here) */
+.author-bio {
+  display: inline-block;
+  /* overflow: hidden;  <-- REMOVE THIS (Not needed for JS method) */
+  /* border-right: ...  <-- REMOVE THIS (This was Cursor #1) */
+  /* white-space: ...   <-- REMOVE THIS (Let text wrap naturally) */
+  margin: 0 auto;
+  
+  /* IMPORTANT: Remove the old 'animation' property entirely */
+}
+
+/* 2. The cursor (This is Cursor #2, the one we want) */
+/* 1. Base Cursor Shape & Animation (Shared by both modes) */
+.typing-cursor::after {
+  content: '';
+  display: inline-block;
+  width: 2px;             /* Width of cursor */
+  height: 1.2em;          /* Height relative to font size */
+  margin-left: 2px;       /* Gap between text and cursor */
+  vertical-align: text-bottom;
+  animation: blink 1s step-start infinite;
+}
+
+/* 2. Light Mode Color (Default) */
+.typing-cursor::after {
+  background-color: black; 
+}
+
+/* 3. Dark Mode Color (Override) */
+html.dark .typing-cursor::after {
+  background-color: white;
+}
+
+/* 4. The Animation Keyframes */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* --- 1. LIGHT MODE (Suggestion: Soft Brand Blue) --- */
+/* This matches your #5292ff accent but is much lighter for readability */
+::selection {
+  background: #b7babb;  /* A soft, icy blue */
+  color: #0d122b;       /* Your existing dark navy text */
+}
+
+/* Firefox backup (sometimes needed) */
+::-moz-selection {
+  background: #b7babb;
+  color: #0d122b;
+}
+
+/* --- 2. DARK MODE (User Request: White) --- */
+html.dark ::selection {
+  background: #ffffff;  /* Pure white background */
+  color: #000000;       /* IMPORTANT: Text must be black to be readable */
+}
+
+html.dark ::-moz-selection {
+  background: #ffffff;
+  color: #000000;
 }
