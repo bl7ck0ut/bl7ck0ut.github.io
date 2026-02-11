@@ -1,0 +1,19 @@
+/* Updated contents for static/css/custom.css */
+
+/* Target the specific classes used by hugo-blog-awesome */
+.author .author-avatar {
+    /* Use !important to ensure we override the theme's compiled SCSS */
+    width: 200px !important;  /* Set to your desired size */
+    height: 200px !important; /* Keep height equal to width for a circle */
+    
+    /* The theme usually handles border-radius, but we can ensure it stays circular */
+    border-radius: 50%;
+}
+
+/* Optional: Adjust for smaller mobile screens so it doesn't take up too much space */
+@media (max-width: 768px) {
+    .author .author-avatar {
+        width: 150px !important;
+        height: 150px !important;
+    }
+}
