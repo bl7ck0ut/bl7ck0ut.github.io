@@ -13,8 +13,8 @@
       
       <guid>https://bl7ck0ut.github.io/pages/about/</guid>
       
-      <description>&lt;p&gt;I’ve finally crossed the line from &amp;lsquo;get me out of here&amp;rsquo; to &amp;lsquo;wait, let me look at those registers. I started out in incident response before falling down the malware analysis rabbit hole.&lt;/p&gt;
-&lt;p&gt;Now, I&amp;rsquo;m pretty much interested in the malware analysis &amp;amp; reverse engineering side of things. I have built this site to document my journey of learning more about reverse engineering, analyzing malware threats &amp;amp; maybe malware development.&lt;/p&gt;</description>
+      <description>&lt;p&gt;I’ve finally crossed the line from &amp;ldquo;&lt;em&gt;get me out of here&lt;/em&gt;&amp;rdquo; to &amp;ldquo;&lt;em&gt;wait, let me look at those registers&lt;/em&gt;&amp;rdquo;. I started out in incident response and have fallen down the malware analysis rabbit hole in the last few years. I’m intrigued by malware and its constantly growing capabilities, especially how it manages to hide from the investigative eyes of analysts.&lt;/p&gt;
+&lt;p&gt;So, I have built this site to document my journey of learning more about reverse engineering, analyzing malware threats &amp;amp; malware development. I hope you find it interesting.&lt;/p&gt;</description>
       
     </item>
     

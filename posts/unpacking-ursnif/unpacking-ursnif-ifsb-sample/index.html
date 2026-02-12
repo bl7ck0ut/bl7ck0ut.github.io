@@ -1,37 +1,29 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="content-type" content="text/html">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title itemprop="name">Posts | bl7ck0ut</title>
-<meta property="og:title" content="Posts | bl7ck0ut" />
-<meta name="twitter:title" content="Posts | bl7ck0ut" />
-<meta itemprop="name" content="Posts | bl7ck0ut" />
-<meta name="application-name" content="Posts | bl7ck0ut" />
+<title itemprop="name">Unpacking Ursnif/IFSB Sample | bl7ck0ut</title>
+<meta property="og:title" content="Unpacking Ursnif/IFSB Sample | bl7ck0ut" />
+<meta name="twitter:title" content="Unpacking Ursnif/IFSB Sample | bl7ck0ut" />
+<meta itemprop="name" content="Unpacking Ursnif/IFSB Sample | bl7ck0ut" />
+<meta name="application-name" content="Unpacking Ursnif/IFSB Sample | bl7ck0ut" />
 <meta property="og:site_name" content="Threat Research &amp; RevEng" />
 
-<meta name="description" content="Malware analysis, reverse engineering &amp; threat research.">
-<meta itemprop="description" content="Malware analysis, reverse engineering &amp; threat research." />
-<meta property="og:description" content="Malware analysis, reverse engineering &amp; threat research." />
-<meta name="twitter:description" content="Malware analysis, reverse engineering &amp; threat research." />
+<meta name="description" content="A deep dive into unpacking the Ursnif/IFSB banking trojan, focusing on its obfuscation techniques and loader mechanism.">
+<meta itemprop="description" content="A deep dive into unpacking the Ursnif/IFSB banking trojan, focusing on its obfuscation techniques and loader mechanism." />
+<meta property="og:description" content="A deep dive into unpacking the Ursnif/IFSB banking trojan, focusing on its obfuscation techniques and loader mechanism." />
+<meta name="twitter:description" content="A deep dive into unpacking the Ursnif/IFSB banking trojan, focusing on its obfuscation techniques and loader mechanism." />
 
 <meta property="og:locale" content="en" />
 <meta name="language" content="en" />
 
-  <link rel="alternate" hreflang="en" href="https://bl7ck0ut.github.io/posts/" title="English" />
+  <link rel="alternate" hreflang="en" href="http://localhost:1313/posts/unpacking-ursnif/unpacking-ursnif-ifsb-sample/" title="English" />
 
 
 
 
 
-    
-    
-    
-    
-    
-    <link rel="first" href="/posts/" />
-    <link rel="last" href="/posts/" />
-    
     
     
     
@@ -39,7 +31,7 @@
     <meta property="og:type" content="article" />
     <meta property="og:article:published_time" content=2026-02-12T09:39:50&#43;0530 />
     <meta property="article:published_time" content=2026-02-12T09:39:50&#43;0530 />
-    <meta property="og:url" content="https://bl7ck0ut.github.io/posts/" />
+    <meta property="og:url" content="http://localhost:1313/posts/unpacking-ursnif/unpacking-ursnif-ifsb-sample/" />
 
     
     <meta property="og:article:author" content="Bhavesh Lohar" />
@@ -54,14 +46,14 @@
     {
         "@context": "http://schema.org",
         "@type": "Article",
-        "headline": "Posts",
+        "headline": "Unpacking Ursnif/IFSB Sample",
         "author": {
         "@type": "Person",
         "name": ""
         },
         "datePublished": "2026-02-12",
-        "description": "",
-        "wordCount":  0 ,
+        "description": "A deep dive into unpacking the Ursnif/IFSB banking trojan, focusing on its obfuscation techniques and loader mechanism.",
+        "wordCount":  259 ,
         "mainEntityOfPage": "True",
         "dateModified": "2026-02-12",
         "image": {
@@ -79,26 +71,31 @@
 <meta name="generator" content="Hugo 0.155.3">
 
     
-    <meta property="og:url" content="https://bl7ck0ut.github.io/posts/">
+    <meta property="og:url" content="http://localhost:1313/posts/unpacking-ursnif/unpacking-ursnif-ifsb-sample/">
   <meta property="og:site_name" content="bl7ck0ut">
-  <meta property="og:title" content="Posts">
-  <meta property="og:description" content="Malware analysis, reverse engineering &amp; threat research.">
+  <meta property="og:title" content="Unpacking Ursnif/IFSB Sample">
+  <meta property="og:description" content="A deep dive into unpacking the Ursnif/IFSB banking trojan, focusing on its obfuscation techniques and loader mechanism.">
   <meta property="og:locale" content="en">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-02-12T09:39:50+05:30">
+    <meta property="article:modified_time" content="2026-02-12T09:39:50+05:30">
+    <meta property="article:tag" content="Malware Analysis">
+    <meta property="article:tag" content="Reversing">
+    <meta property="article:tag" content="Ursnif">
+    <meta property="article:tag" content="Unpacking">
 
 
     
     
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Posts">
-  <meta name="twitter:description" content="Malware analysis, reverse engineering &amp; threat research.">
+  <meta name="twitter:title" content="Unpacking Ursnif/IFSB Sample">
+  <meta name="twitter:description" content="A deep dive into unpacking the Ursnif/IFSB banking trojan, focusing on its obfuscation techniques and loader mechanism.">
 
 
     
 
-    <link rel="canonical" href="https://bl7ck0ut.github.io/posts/">
-    <link href="/posts/index.xml" rel="alternate" type="application/rss+xml" title="bl7ck0ut">
-    <link href="/posts/index.xml" rel="feed" type="application/rss+xml" title="bl7ck0ut">
+    <link rel="canonical" href="http://localhost:1313/posts/unpacking-ursnif/unpacking-ursnif-ifsb-sample/">
     <link href="/style.min.2d921c18cf1ec555ffc03d59a8adc211c402c68c930c27d6a0c306ab175a8d09.css" rel="stylesheet">
     <link href="/code-highlight.min.706d31975fec544a864cb7f0d847a73ea55ca1df91bf495fd12a177138d807cf.css" rel="stylesheet">
     
@@ -114,7 +111,7 @@
 
 
 
-<link rel="manifest" href="https://bl7ck0ut.github.io/site.webmanifest">
+<link rel="manifest" href="http://localhost:1313/site.webmanifest">
 
 <meta name="msapplication-config" content="/browserconfig.xml">
 <meta name="msapplication-TileColor" content="#2d89ef">
@@ -126,15 +123,14 @@
 
     
     
-    
 </head>
 <body data-theme = "dark" class="notransition">
 
-<script src="/js/theme.min.8961c317c5b88b953fe27525839672c9343f1058ab044696ca225656c8ba2ab0.js" integrity="sha256-iWHDF8W4i5U/4nUlg5ZyyTQ/EFirBEaWyiJWVsi6KrA="></script>
+<script src="/js/theme.js"></script>
 
 <div class="navbar" role="navigation">
     <nav class="menu" aria-label="Main Navigation">
-        <a href="https://bl7ck0ut.github.io/" class="logo">
+        <a href="http://localhost:1313/" class="logo">
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" 
 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" 
 stroke-linejoin="round" class="feather feather-home">
@@ -190,40 +186,163 @@ stroke-linejoin="round" class="feather feather-home">
         </div>
     </nav>
 </div>
-<div class="wrapper list-page">
-    <header class="header">
-        <h1 class="header-title center">Posts</h1>
-    </header>
+
+<div class="wrapper post">
     <main class="page-content" aria-label="Content">
-        
-        
-        <h2 class="post-year">2026</h2>
+        <article>
+            <header class="header">
+                <h1 class="header-title">Unpacking Ursnif/IFSB Sample</h1>
+                
+                
+                
+                <div class="post-meta">
+                    <time datetime="2026-02-12T09:39:50&#43;05:30" itemprop="datePublished"> Feb 12, 2026 </time>
+                </div>
+                
+                
+                <style>
+                   
+                  .post-tags {
+                    margin: 20px 0;
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    gap: 8px;
+                  }
+                  
+                   
+                   
+                  
+                   
+                  .post-tags span {
+                    font-size: 0.9rem;
+                    font-weight: bold;
+                    margin-right: 5px;
+                    color: #000000 !important;  
+                    opacity: 1 !important;
+                  }
 
-        
+                   
+                  .post-tags a {
+                    display: inline-block !important;
+                    text-decoration: none !important;
+                    padding: 2px 8px !important;
+                    border-radius: 4px !important;
+                    font-size: 0.75rem !important;
+                    font-weight: normal !important;
+                    line-height: 1.2 !important;
+                    transition: all 0.2s ease;
+                    
+                     
+                    color: #000000 !important;        
+                    border: 1px solid #000000 !important;  
+                    background: transparent !important;    
+                  }
 
-        
+                   
+                  .post-tags a:hover {
+                    background-color: #000000 !important;  
+                    color: #ffffff !important;             
+                  }
 
-        <article class="post-item">
-    <h4 class="post-item-title">
-        <a href="/posts/unpacking-ursnif-ifsb-sample/">Unpacking Ursnif/IFSB Sample</a>
-    </h4>
+                   
+                   
+                  
+                  html.dark .post-tags span {
+                    color: #cccccc !important;
+                  }
+
+                  html.dark .post-tags a {
+                    color: #ffffff !important;        
+                    border: 1px solid #ffffff !important;  
+                  }
+
+                  html.dark .post-tags a:hover {
+                    background-color: #ffffff !important;  
+                    color: #000000 !important;             
+                  }
+                </style>
+
+                
+                <div class="post-tags">
+                    <span>Tags:</span>
+                    
+                    <a href="http://localhost:1313/tags/malware-analysis/">Malware Analysis</a>
+                    
+                    <a href="http://localhost:1313/tags/reversing/">Reversing</a>
+                    
+                    <a href="http://localhost:1313/tags/ursnif/">Ursnif</a>
+                    
+                    <a href="http://localhost:1313/tags/unpacking/">Unpacking</a>
+                    
+                </div>
+                
+
+            </header>
+            
     
-    
-    
-    
-    <time class="post-item-meta" datetime="2026-02-12T09:39:50&#43;0530">
-        12 Feb 2026
-        
-    </time>
-</article>
+    <details class="toc" ZgotmplZ>
+        <summary><b></b></summary>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#static-analysis">Static Analysis</a>
+      <ul>
+        <li>
+          <ul>
+            <li></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </details>
+            <div class="page-content">
+                <h2 id="introduction">Introduction</h2>
+<p><a href="https://attack.mitre.org/software/S0386/">Ursnif</a>, also known as Gozi or Dreambot, is a banking trojan that has managed to remain a major threat for nearly two decades. Originally identified back in 2006, it primarily spreads through phishing emails that trick users into clicking malicious links or opening suspicious attachments. Ursnif is associated primarily with data theft, but variants also include components (backdoors, spyware, file injectors, etc.) capable of a wide variety of behaviors.</p>
+<p>In this blog, we well be working with a packed Ursnif sample. Our goal here is to unpack the sample, extract the next stager and unmap it from memory if required so it can be analysed further.</p>
+<h2 id="static-analysis">Static Analysis</h2>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left"><strong>Property</strong></th>
+          <th style="text-align: left"><strong>Value</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><strong>MD5</strong></td>
+          <td style="text-align: left"><code>F108DECCD4B4819BE8D09319D3918E38</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>SHA256</strong></td>
+          <td style="text-align: left"><code>9163873FC51200255C952A012E04032EADCB443A67DCC41B399E281D3F80FB31</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>CPU arch</strong></td>
+          <td style="text-align: left"><code>32-bit</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>Entropy</strong></td>
+          <td style="text-align: left"><code>6.643</code></td>
+      </tr>
+  </tbody>
+</table>
+<p>Looking at the file in <a href="https://www.winitor.com/download">PEStudio</a> shows various important static properties of the file. Key properties to note are the file&rsquo;s 32-bit architecture and its entropy of 6.643. I also examined the loaded DLLs, imported functions, and the embedded strings. But most of the strings look like meaningless junk data which is another sign of a file being packed or compressed.</p>
+<p><em>File entropy measures the randomness of data within a file, typically on a scale from <strong>0 to 8 bits</strong>. A value close to 0 indicates low complexity (e.g., plain text), while a value near 8 suggests high randomness, characteristic of encrypted, compressed, or packed files.</em></p>
+<p>I like running the sample through another tool called <a href="https://github.com/horsicq/Detect-It-Easy">DetectItEasy</a>.</p>
+<p><img src="/images/DIE.png" alt="DetectItEasy"></p>
+<h5 id="observations">Observations</h5>
+<ul>
+<li>While high entropy is a strong indicator, it should not be taken as a definitive proof for considering a file as packed.</li>
+<li></li>
+</ul>
 
-
-         
-
-         
-
-    </main>
-</div><footer class="footer">
+            </div>
+        </article></main>
+</div>
+<footer class="footer">
     <span class="footer_item"> </span>
     &nbsp;
 
@@ -322,7 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     
-    <script src="https://bl7ck0ut.github.io/js/main.min.35f435a5d8eac613c52daa28d8af544a4512337d3e95236e4a4978417b8dcb2f.js" integrity="sha256-NfQ1pdjqxhPFLaoo2K9USkUSM30&#43;lSNuSkl4QXuNyy8="></script>
+    <script async src="http://localhost:1313/js/main.js" ></script>
 
     
 
