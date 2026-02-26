@@ -1,2 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Reversing on bl7ck0ut</title><link>https://bl7ck0ut.github.io/tags/reversing/</link><description>Recent content in Reversing on bl7ck0ut</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 12 Feb 2026 09:39:50 +0530</lastBuildDate><atom:link href="https://bl7ck0ut.github.io/tags/reversing/index.xml" rel="self" type="application/rss+xml"/><item><title>Unpacking Ursnif/IFSB Sample</title><link>https://bl7ck0ut.github.io/posts/unpacking-ursnif-ifsb-sample/</link><pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate><guid>https://bl7ck0ut.github.io/posts/unpacking-ursnif-ifsb-sample/</guid><description>&lt;h2 id="introduction"&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;&lt;a href="https://attack.mitre.org/software/S0386/"&gt;Ursnif&lt;/a&gt;, also known as Gozi or Dreambot, is a banking trojan that has managed to remain a major threat for nearly two decades. Originally identified back in 2006, it primarily spreads through phishing emails that trick users into clicking malicious links or opening suspicious attachments. Ursnif is associated primarily with data theft, but variants also include components (backdoors, spyware, file injectors, etc.) capable of a wide variety of behaviors.&lt;/p&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Reversing on bl7ck0ut</title>
+    <link>https://bl7ck0ut.github.io/tags/reversing/</link>
+    <description>Recent content in Reversing on bl7ck0ut</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 12 Feb 2026 09:39:50 +0530</lastBuildDate><atom:link href="https://bl7ck0ut.github.io/tags/reversing/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Unpacking Ursnif/IFSB Sample</title>
+      <link>https://bl7ck0ut.github.io/posts/unpacking-ursnif-ifsb-sample/</link>
+      <pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate>
+      
+      <guid>https://bl7ck0ut.github.io/posts/unpacking-ursnif-ifsb-sample/</guid>
+      
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://attack.mitre.org/software/S0386/&#34;&gt;Ursnif&lt;/a&gt;, also known as Gozi or Dreambot, is a banking trojan that has managed to remain a major threat for nearly two decades. Originally identified back in 2006, it primarily spreads through phishing emails that trick users into clicking malicious links or opening suspicious attachments. Ursnif is associated primarily with data theft, but variants also include components (backdoors, spyware, file injectors, etc.) capable of a wide variety of behaviors.&lt;/p&gt;</description>
+      
+    </item>
+    
+  </channel>
+</rss>

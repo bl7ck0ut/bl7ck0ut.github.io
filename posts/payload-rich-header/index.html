@@ -1,10 +1,562 @@
-<!doctype html><html lang=en><head><meta charset=utf-8><meta http-equiv=content-type content="text/html"><meta name=viewport content="width=device-width,initial-scale=1"><title itemprop=name>Payload Placement in the Rich Header & its Execution | bl7ck0ut</title><meta property="og:title" content="Payload Placement in the Rich Header & its Execution | bl7ck0ut"><meta name=twitter:title content="Payload Placement in the Rich Header & its Execution | bl7ck0ut"><meta itemprop=name content="Payload Placement in the Rich Header & its Execution | bl7ck0ut"><meta name=application-name content="Payload Placement in the Rich Header & its Execution | bl7ck0ut"><meta property="og:site_name" content="Threat Research & RevEng"><meta name=description content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections."><meta itemprop=description content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections."><meta property="og:description" content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections."><meta name=twitter:description content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections."><meta property="og:locale" content="en"><meta name=language content="en"><link rel=alternate hreflang=en href=https://bl7ck0ut.github.io/posts/payload-rich-header/ title=English><meta property="og:type" content="article"><meta property="og:article:published_time" content=2026-02-25T21:39:50+0530><meta property="article:published_time" content=2026-02-25T21:39:50+0530><meta property="og:url" content="https://bl7ck0ut.github.io/posts/payload-rich-header/"><meta property="og:article:author" content="Bhavesh Lohar"><meta property="article:author" content="Bhavesh Lohar"><meta name=author content="Bhavesh Lohar"><script defer type=application/ld+json>{"@context":"http://schema.org","@type":"Article","headline":"Payload Placement in the Rich Header \u0026 its Execution","author":{"@type":"Person","name":""},"datePublished":"2026-02-25","description":"An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections.","wordCount":2315,"mainEntityOfPage":"True","dateModified":"2026-02-25","image":{"@type":"imageObject","url":""},"publisher":{"@type":"Organization","name":"bl7ck0ut"}}</script><meta name=generator content="Hugo 0.155.3"><meta property="og:url" content="https://bl7ck0ut.github.io/posts/payload-rich-header/"><meta property="og:site_name" content="bl7ck0ut"><meta property="og:title" content="Payload Placement in the Rich Header & its Execution"><meta property="og:description" content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections."><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-02-25T21:39:50+05:30"><meta property="article:modified_time" content="2026-02-25T21:39:50+05:30"><meta property="article:tag" content="Malware Development"><meta property="article:tag" content="Windows Internals"><meta property="article:tag" content="Security Research"><meta name=twitter:card content="summary"><meta name=twitter:title content="Payload Placement in the Rich Header & its Execution"><meta name=twitter:description content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections."><link rel=canonical href=https://bl7ck0ut.github.io/posts/payload-rich-header/><link href=/style.min.2d921c18cf1ec555ffc03d59a8adc211c402c68c930c27d6a0c306ab175a8d09.css rel=stylesheet><link href=/code-highlight.min.706d31975fec544a864cb7f0d847a73ea55ca1df91bf495fd12a177138d807cf.css rel=stylesheet><link rel=stylesheet href=/css/custom.css><link rel=apple-touch-icon sizes=180x180 href=/icons/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/icons/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/icons/favicon-16x16.png><link rel=mask-icon href=/icons/safari-pinned-tab.svg><link rel="shortcut icon" href=/favicon.ico><link rel=manifest href=https://bl7ck0ut.github.io/site.webmanifest><meta name=msapplication-config content="/browserconfig.xml"><meta name=msapplication-TileColor content="#2d89ef"><meta name=theme-color content="#434648"><meta name=color-scheme content="light dark"><link rel=icon type=image/svg+xml href=/icons/favicon.svg></head><body data-theme=light class=notransition><script src=/js/theme.min.8961c317c5b88b953fe27525839672c9343f1058ab044696ca225656c8ba2ab0.js integrity="sha256-iWHDF8W4i5U/4nUlg5ZyyTQ/EFirBEaWyiJWVsi6KrA="></script><div class=navbar role=navigation><nav class=menu aria-label="Main Navigation"><a href=https://bl7ck0ut.github.io/ class=logo><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><title/><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-</a><input type=checkbox id=menu-trigger class=menu-trigger>
-<label for=menu-trigger><span class=menu-icon><svg width="25" height="25" stroke="currentColor" fill="none" viewBox="0 0 14 14"><title>Menu</title><path stroke-linecap="round" stroke-linejoin="round" d="M10.595 7H3.40726"/><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 3.51488H3.49301"/><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 10.4851H3.49301"/><path stroke-linecap="round" stroke-linejoin="round" d="M.5 12.5V1.5c0-.552285.447715-1 1-1h11C13.0523.5 13.5.947715 13.5 1.5v11C13.5 13.0523 13.0523 13.5 12.5 13.5H1.5C.947715 13.5.5 13.0523.5 12.5z"/></svg></span></label><div class=trigger><ul class=trigger-container><li><a class=menu-link href=/>Home</a></li><li><a class="menu-link active" href=/posts/>Posts</a></li><li><a class=menu-link href=/pages/about/>About</a></li><li class=menu-separator><span>|</span></li></ul><a id=mode href=#><svg class="mode-sunny" width="21" height="21" viewBox="0 0 14 14" stroke-width="1"><title>LIGHT</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="7" y1=".5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1=".5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></svg>
-<svg class="mode-moon" width="21" height="21" viewBox="0 0 14 14" stroke-width="1"><title>DARK</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="7" y1=".5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1=".5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></svg></a></div></nav></div><div class="wrapper post"><main class=page-content aria-label=Content><article><header class=header><h1 class=header-title>Payload Placement in the Rich Header & its Execution</h1><div class=post-meta><time datetime=2026-02-25T21:39:50+05:30 itemprop=datePublished>Feb 25, 2026</time></div><style>.post-tags{margin:20px 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px}.post-tags span{font-size:.9rem;font-weight:700;margin-right:5px;color:#000!important;opacity:1!important}.post-tags a{display:inline-block!important;text-decoration:none!important;padding:2px 8px!important;border-radius:4px!important;font-size:.75rem!important;font-weight:400!important;line-height:1.2!important;transition:all .2s ease;color:#000!important;border:1px solid #000!important;background:0 0!important}.post-tags a:hover{background-color:#000!important;color:#fff!important}html.dark .post-tags span{color:#ccc!important}html.dark .post-tags a{color:#fff!important;border:1px solid #fff!important}html.dark .post-tags a:hover{background-color:#fff!important;color:#000!important}</style><div class=post-tags><span>Tags:</span>
-<a href=https://bl7ck0ut.github.io/tags/malware-development/>Malware Development</a>
-<a href=https://bl7ck0ut.github.io/tags/windows-internals/>Windows Internals</a>
-<a href=https://bl7ck0ut.github.io/tags/security-research/>Security Research</a></div></header><details class=toc zgotmplz><summary><b></b></summary><nav id=TableOfContents><ul><li><a href=#introduction>Introduction</a></li><li><a href=#what-is-the-rich-header>What is the Rich Header?</a></li><li><a href=#key-observations--the-goal>Key Observations & The Goal</a></li><li><a href=#inside-the-custom-loader>Inside The Custom Loader</a></li><li><a href=#shellcode-injection--file-alignment>Shellcode Injection & File Alignment</a></li><li><a href=#cross-comparison>Cross Comparison</a><ul><li><a href=#observations>Observations</a></li></ul></li><li><a href=#execution>Execution</a></li><li><a href=#so-how-to-hunt-it>So How to Hunt It?</a></li><li><a href=#conclusion-the-threat-actor-advantage>Conclusion: The Threat Actor Advantage</a></li></ul></nav></details><div class=page-content><h2 id=introduction>Introduction</h2><p>In the world of malware development and threat engineering, payload placement is a foundational element of evasion. At its core, payload placement is all about concealing shellcode or malicious configuration data within a host executable, allowing it to remain dormant until it is dynamically extracted and executed at runtime. The primary objective is stealth & slipping past the static signatures and heuristic checks of modern security controls. Historically, malware authors have staged these payloads within the well-documented boundaries of the Portable Executable (PE) format, staging their code in standard sections like <code>.text</code>, <code>.data</code>, or <code>.rsrc</code>, or occasionally appending entirely new sections specifically to store the payload.<br><br><a href=https://securelist.com/the-devils-in-the-rich-header/84348/>Kaspersky&rsquo;s report</a> on 2018 Olympic Destroyer malware shows that a threat actor deliberately modified and tampered the Rich Header to cause misattribution and complicate forensic analysis. So my question after reading this report was - can it be used for something else?<br><br>Maybe a place to hide shellcode?<p>In this blog, I will discuss the Rich header, the information it contains, and what it looks like. I will then present my proof of concept (PoC), demonstrating how I used the Rich header as a staging area for shellcode and, during runtime, retrieved the shellcode from the Rich header, loaded it into memory, and executed it. So, let’s begin!</p><h2 id=what-is-the-rich-header>What is the Rich Header?</h2><p>The Rich Header is essentially an undocumented part of the Portable Executable (PE) file format. It is exclusively an artifact of the <strong>Microsoft Visual Studio toolchain</strong>. The Rich Header is a block of data inserted by the linker that records the build environment used to create the executable. So if an executable was built using the Microsoft Visual Studio toolset, it will almost certainly have a Rich Header.<br><br>Rich header lies between the DOS Stub (<code>This program cannot be run in DOS mode</code>) and the start of the NT Headers (<code>PE</code>). I have opened <code>calc.exe</code> in PE Bear below to show what it looks like.</p><figure><img src=/posts/payload-rich-header/1.png alt="Fig 1: PE Bear hex view shows DOS Stub, Rich Header & NT Headers."><figcaption><p>Fig 1: PE Bear hex view shows DOS Stub, Rich Header & NT Headers.</p></figcaption></figure><p>The Rich Header contains a chunk of XOR&rsquo;d data which is followed by a signature (<code>Rich</code>) and a 32-bit checksum value which acts as the XOR key. PE Bear parses the rich header & shows us the information automatically as shown below.</p><figure><img src=/posts/payload-rich-header/2.png alt="Fig 2: Breakdown of the Rich header."><figcaption><p>Fig 2: Breakdown of the Rich header.</p></figcaption></figure><p>We can breakdown the Rich Header into the following parts -</p><ol><li><strong>DanS ID</strong> - 4 bytes (1 DWORD), <code>0x536E6144</code> (spells &ldquo;<strong>DanS</strong>&rdquo;). This marks the absolute beginning of the Rich Header.</li><li><strong>Checksumed padding</strong> - Typically 12 bytes (3 DWORDs) - each 4-bytes. The start of the Rich Header is padded with zeros (before encryption) to ensure memory alignment.</li><li><strong>Comp ID</strong> - This consists of pairs of DWORD values, where each pair forms a single entry. Each entry contains a tool identifier, its build number, a usage count indicating how many times it was invoked and a potential VS version.</li><li><strong>Rich ID</strong> - <code>0x68636952</code> (which spells &ldquo;Rich&rdquo; in ASCII, read via little-endian). This is the plaintext boundary marker indicating the <strong>end</strong> of the Rich Header.</li><li><strong>Checksum</strong> - It&rsquo;s the XOR key, a DWORD, 4 bytes in size. It functions as an XOR key for the preceding data and acts as a checksum to verify that the DOS header and stub have not been modified. The linker uses this checksum as the XOR key to encrypt the rest of the Rich Header above it.</li></ol><h2 id=key-observations--the-goal>Key Observations & The Goal</h2><ul><li><p>The Windows OS loader relies entirely on the <code>e_lfanew</code> pointer (which holds the offset to the NT Headers) to jump from the DOS Header directly to the NT Headers. Everything in between, including the Rich header, is ignored during the execution phase.</p></li><li><p>The Rich Header is intentionally encrypted. Microsoft natively XOR-encrypts this block using a checksum of the DOS header. Because security tools and endpoint sensors expect this region to contain a cryptographic blob of telemetry data, hiding XOR-encrypted C2 domains, IP addresses, or even shellcode there might allow malware to blend into the expected “noise.”</p></li><li><p><strong>Goal</strong> - Taking into account the two observations above, my goal is to create a weaponized executable that contains shellcode in its Rich header. Once executed, the program would parse its own PE headers at runtime to calculate the necessary offsets and locate the Rich header and the embedded shellcode inside it. It would then decrypt the shellcode, allocate a new memory region, load the shellcode into that region, and execute it.</p></li></ul><h2 id=inside-the-custom-loader>Inside The Custom Loader</h2><p>For the extraction and execution phase, I developed a custom loader in C/C++. To successfully execute the hidden shellcode, the program needs to be self-aware. It cannot rely on hardcoded memory offsets because the Rich Header &ldquo;floats&rdquo; i.e. its exact size and location shifts depending on the compiler version, linker settings, and the size of the DOS stub. To solve this, the custom loader dynamically parses its own PE structure in memory to find the payload. The execution flow looks something like this -</p><ol><li><p><strong>The Backward Slide</strong>: The loader resolves its own Image Base address in memory. It parses the DOS Header to read the <code>e_lfanew</code> pointer, which gives it the exact starting address of the NT Headers. Because we know the Rich Header exists just before this point, the loader begins scanning backwards, byte-by-byte, until it hits the <code>0x68636952</code> (<strong>Rich</strong>) magic bytes.</p></li><li><p><strong>XOR Key Extraction</strong>: As established earlier, the 4 bytes immediately following the Rich signature contains the checksum. The loader extracts this to use as its XOR decryption key.</p></li><li><p><strong>Locating the Boundary</strong>: The loader continues to scan backward in 4-byte (DWORD) chunks, XORing the memory with the extracted key as it goes. It stops the moment the result equals <code>0x536E6144</code> (DanS), marking the absolute beginning of the Rich header. So by now, we know where it starts & ends.</p></li><li><p><strong>The Execution</strong>: Knowing the exact boundaries, the loader calculates the payload size (the space between the 16-byte DanS header (DanS + Checksummed Padding) and the Rich signature). It allocates a new memory segment using VirtualAlloc with PAGE_EXECUTE_READWRITE permissions, XOR-decrypts the payload into this new region, and redirects the instruction pointer to detonate the shellcode.</p></li></ol><h2 id=shellcode-injection--file-alignment>Shellcode Injection & File Alignment</h2><p>Writing a C loader to extract the payload was only half the battle. Getting a weaponized, 276-byte shellcode payload into a <strong>compiled</strong> executable without corrupting it proved to be a significant engineering hurdle.</p><p>You cannot simply append shellcode into the Rich Header space. Modern compilers leave very little zero-padding between the end of the DOS stub and the start of the NT Headers. If the payload is larger than the available gap, injecting it physically pushes the NT Headers, the Section Headers, and the actual raw data (like <code>.text</code> and <code>.data</code>) further down the file on disk.</p><p>If you do this blindly, you trigger a cascading failure. The Windows Loader relies on the <code>PointerToRawData</code> values inside the Section Headers to know exactly where the executable code lives on disk to map it into memory. If you shift the file’s contents but fail to update those pointers, the OS will read garbage bytes instead of the <code>.text</code> section and instantly throw an <code>ERROR_BAD_EXE_FORMAT</code> exception.</p><p>To solve this, I wrote a custom Python builder script that mathematically rebuilds the executable:</p><ol><li><p><strong>Checksum Recalculation</strong>: First, it recalculates the bitwise left-rotation (rol32) checksum against the newly injected shellcode. If this isn&rsquo;t mathematically perfect, PE parsers will flag the header as corrupt.</p></li><li><p><strong>Dynamic Shifting</strong>: It calculates the exact byte-shift required to fit the new payload while maintaining the strict 512-byte file alignment required by Win32 executables.</p></li><li><p><strong>Header Patching</strong>: It iterates through every single Section Header and adds the alignment shift amount to the <code>PointerToRawData</code> fields, ensuring the OS loader can still find the <code>.text</code> section seamlessly. Finally, it updates <code>e_lfanew</code> and the <code>SizeOfHeaders</code> variable to account for the artificially expanded padding.</p></li></ol><h2 id=cross-comparison>Cross Comparison</h2><p>By executing this Python builder against my compiled C/C++ loader, I was able to successfully generate the final, weaponized executable. Upon inspecting the output, the shellcode was properly embedded within the Rich Header. Even though the 276-byte payload exceeded the size of the original compiler data, the dynamic file alignment worked as intended. Below is the comparison of the loader.exe before & after it had shellcode in its rich header.</p><p>For ease, I have mentioned below which file has shellcode & which one doesn&rsquo;t.</p><ul><li><code>loader.exe</code> - No Shellcode</li><li><code>infected_loader.exe</code> - Contains Shellcode<br><br></li></ul><figure><img src=/posts/payload-rich-header/3.png alt="Fig 3: loader.exe with valid Rich header - No shellcode."><figcaption><p>Fig 3: loader.exe with valid Rich header - No shellcode.</p></figcaption></figure><p>PE-Bear shows the <code>loader.exe</code>&rsquo;s rich header containing valid compiler data, ProductId, BuildId & count as we discussed earlier.</p><p>The screenshot below shows <code>infected_loader</code>.exe, in which the compiler metadata has been replaced with shellcode. The file has also been realigned to accommodate the increased size of the embedded shellcode.</p><figure><img src=/posts/payload-rich-header/4.png alt="Fig 4: infected_loader.exe contains shellcode."><figcaption><p>Fig 4: infected_loader.exe contains shellcode.</p></figcaption></figure><figure><img src=/posts/payload-rich-header/5.png alt="Fig 5: infected_loader.exe - Rich Hdr"><figcaption><p>Fig 5: infected_loader.exe - Rich Hdr</p></figcaption></figure><h3 id=observations>Observations</h3><ol><li>Shellcode has successfully been injected into the Rich header and as the shellcode is visibly larger than the previous compiler gap, injecting it physically pushed the NT Headers, the Section Headers, and the actual raw data (like <code>.text</code> and <code>.data</code>) further down the file on disk. So the python file has successfully realigned the file and recalculated the necessary offsets and the other required data to put back the file.</li><li>Shellcode is placed after the 16-bytes DanS signature (DanS ID + 3 Checksummed Padding) and resides between the DanS offset and the &ldquo;Rich&rdquo; signature (Rich ID).</li><li>The shellcode is currently XOR&rsquo;d using the checksum value that we discussed earlier.</li></ol><h2 id=execution>Execution</h2><p>The execution of the shellcode was highly successful. The python script successfully weaponized a clean binary, and upon execution, the loader cleanly decoupled the shellcode from the padding and executed it purely in memory.</p><figure><img src=/posts/payload-rich-header/6.gif alt="Gif : Execution of the infected_loader.exe, shellcode popping up calc."><figcaption><p>Gif : Execution of the infected_loader.exe, shellcode popping up calc.</p></figcaption></figure><p>From an evasion standpoint, this technique creates a massive blind spot. Because the payload is wrapped in the native Microsoft XOR checksum, signature-scanning for C2 domains or shellcode patterns on disk will yield nothing. Furthermore, no additional sections are created in the PE file & the <code>.text</code> and <code>.rdata</code> sections remain completely unmodified, meaning static heuristics evaluating the program&rsquo;s primary logic will see a benign application.</p><h2 id=so-how-to-hunt-it>So How to Hunt It?</h2><p>To detect this, defenders must shift their focus from traditional byte signatures to structural anomalies.</p><p>In a standard, benign executable compiled with Visual Studio, the distance from the start of the file to the NT Headers (<code>e_lfanew</code>) rarely exceeds <code>0xE0</code> to <code>0x110</code> bytes. If a threat actor injects a massive payload into the Rich Header, this padding must be artificially expanded. If you encounter a binary where <code>e_lfanew</code> is greater than <code>0x150</code> (336 bytes), it is a glaring structural anomaly. This can always be tuned with more experimentation with the size of the padding.</p><p>We can operationalize this hunt by writing a YARA rule that targets this exact architectural deviation. You can find the YARA rule here on my <a href=https://github.com/bl7ck0ut/YARA-Rules/blob/main/abnormal_rich_header.yara>github repo</a>. But here&rsquo;s the break down of the logic behind this detection:</p><ol><li><p><code>(uint16(0) == 0x5a4d)</code> : This simply ensures the scanner is only evaluating valid Windows executables starting with the MZ DOS signature.</p></li><li><p><code>(uint32(0x3c) > 0x150)</code> : This is the core of our YARA rule. By checking the 32-bit integer at offset 0x3C (<code>e_lfanew</code>), we immediately know how far down the file the NT Headers start. Since a standard MSVC DOS stub plus its Rich Header rarely exceeds 256 to 288 bytes, a value jumping past 0x150 is a mathematical indicator that the padding gap was inflated to conceal a payload.</p></li><li><p><code>(for any i in...)</code> : To avoid false positives with non-MSVC binaries that might just have strangely formatted headers, we verify the presence of the Rich Header. We strictly bound the search loop to only check the padding between the end of the standard DOS Header (<code>0x40</code>) and the start of the NT Headers (<code>e_lfanew</code>). By looking for the hex value <code>0x68636952</code> ("<strong>Rich</strong>" in little-endian), we keep the rule highly performant while accurately zeroing in on weaponized padding space.</p></li></ol><h2 id=conclusion-the-threat-actor-advantage>Conclusion: The Threat Actor Advantage</h2><p>The Rich Header represents a structural blind spot that mature threat groups can easily weaponize to bypass modern security controls. By moving payloads out of highly scrutinized areas like the <code>.text</code> or <code>.rsrc</code> sections and into undocumented compiler padding, attackers gain several distinct tactical advantages:</p><ul><li><p><strong>Decoupled Loaders and LotL Attacks</strong>: Threat actors can drop a completely benign, perhaps even digitally signed, executable onto the disk. Because the executable code itself is clean, static AV engines will likely ignore it. The actual execution is triggered by a secondary Living-off-the-Land (LotL) script—like PowerShell or a heavily obfuscated macro—that simply reads the benign executable from disk, extracts the XORed shellcode from the Rich Header, and injects it into a target process. This breaks the execution chain; the script contains no payload, and the executable contains no malicious logic.</p></li><li><p><strong>Stealthy C2 Configuration Storage</strong>: Shellcode isn&rsquo;t the only thing that can be hidden here. Advanced malware frequently needs to store Command and Control (C2) IP addresses, domain generation algorithm (DGA) seeds, or RC4 decryption keys. Hardcoding these in the .data section makes them trivial to extract. By formatting configuration data into 8-byte chunks and burying it in the Rich Header under the native Microsoft XOR checksum, the strings are completely destroyed on disk, blending perfectly into the expected compiler telemetry noise.</p></li></ul><p>As threat researchers, this technique serves as a stark reminder that we cannot solely rely on the Windows OS loader’s interpretation of a file. Attackers will constantly look for the &ldquo;dead zones&rdquo; in our visibility. If there is an undocumented gap in the PE format, it is only a matter of time before it is actively exploited in the wild.</p><p>Maybe in the next blog, we can perform both static and dynamic analysis of this executable and use a debugger to uncover more interesting aspects of its behavior.</p><p>That&rsquo;ll be all for today. Kudos to you if you have stuck around till the end!</p></div></article></main></div><footer class=footer><span class=footer_item></span>&nbsp;<div class=footer_social-icons><a href=https://github.com/bl7ck0ut target=_blank rel="noopener noreferrer me" title=Github><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
-</a><a href=https://linkedin.com/in/bhaveshkumarlohar target=_blank rel="noopener noreferrer me" title=Linkedin><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-</a><a href=https://bl7ck0ut.medium.com target=_blank rel="noopener noreferrer me" title=Medium><svg version="1.0" fill="currentColor" stroke-width="2" viewBox="0 0 76 76"><g transform="translate(0.000000,76.000000) scale(0.100000,-0.100000)"><path d="M0 380V0h380 380v380 380H380 0V380zm334 85c30-63 57-115 59-115s16 30 31 68c15 37 37 88 49 115l20 47h76l76-1-27-20-28-21V387c0-150 0-151 27-179l27-28H535 426l27 28c26 27 27 32 26 143 0 131 3 134-71-58-24-62-48-113-53-113-6 0-17 16-24 35s-36 83-64 142l-52 108-3-98c-3-97-2-99 28-133 16-19 30-39 30-44 0-6-31-10-70-10-45 0-70 4-70 11 0 6 14 27 30 46 30 33 30 35 30 151s0 118-31 155l-30 37h75 76l54-115z"/></g></svg></a></div><small class=footer_copyright>© 2026 Bhavesh Lohar.</small></footer><a href=# title id=totop><svg width="48" height="48" fill="currentColor" stroke="currentColor" viewBox="0 96 960 960"><path d="M283 704.739 234.261 656 480 410.261 725.739 656 677 704.739l-197-197-197 197z"/></svg>
-</a><script>document.addEventListener("DOMContentLoaded",function(){const e=document.querySelector(".author-bio");if(e){const s=e.innerText;e.innerText="",e.classList.add("typing-cursor");let n=0;function t(){n<s.length&&(e.textContent+=s.charAt(n),n++,setTimeout(t,50))}t()}})</script><script src=https://bl7ck0ut.github.io/js/main.min.35f435a5d8eac613c52daa28d8af544a4512337d3e95236e4a4978417b8dcb2f.js integrity="sha256-NfQ1pdjqxhPFLaoo2K9USkUSM30+lSNuSkl4QXuNyy8="></script></body></html>
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title itemprop="name">Payload Placement in the Rich Header &amp; its Execution | bl7ck0ut</title>
+<meta property="og:title" content="Payload Placement in the Rich Header &amp; its Execution | bl7ck0ut" />
+<meta name="twitter:title" content="Payload Placement in the Rich Header &amp; its Execution | bl7ck0ut" />
+<meta itemprop="name" content="Payload Placement in the Rich Header &amp; its Execution | bl7ck0ut" />
+<meta name="application-name" content="Payload Placement in the Rich Header &amp; its Execution | bl7ck0ut" />
+<meta property="og:site_name" content="Threat Research &amp; RevEng" />
+
+<meta name="description" content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections.">
+<meta itemprop="description" content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections." />
+<meta property="og:description" content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections." />
+<meta name="twitter:description" content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections." />
+
+<meta property="og:locale" content="en" />
+<meta name="language" content="en" />
+
+  <link rel="alternate" hreflang="en" href="https://bl7ck0ut.github.io/posts/payload-rich-header/" title="English" />
+
+
+
+
+
+    
+    
+    
+
+    <meta property="og:type" content="article" />
+    <meta property="og:article:published_time" content=2026-02-25T21:39:50&#43;0530 />
+    <meta property="article:published_time" content=2026-02-25T21:39:50&#43;0530 />
+    <meta property="og:url" content="https://bl7ck0ut.github.io/posts/payload-rich-header/" />
+
+    
+    <meta property="og:article:author" content="Bhavesh Lohar" />
+    <meta property="article:author" content="Bhavesh Lohar" />
+    <meta name="author" content="Bhavesh Lohar" />
+    
+    
+
+    
+
+    <script defer type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "Article",
+        "headline": "Payload Placement in the Rich Header \u0026 its Execution",
+        "author": {
+        "@type": "Person",
+        "name": ""
+        },
+        "datePublished": "2026-02-25",
+        "description": "An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections.",
+        "wordCount":  2553 ,
+        "mainEntityOfPage": "True",
+        "dateModified": "2026-02-25",
+        "image": {
+        "@type": "imageObject",
+        "url": ""
+        },
+        "publisher": {
+        "@type": "Organization",
+        "name": "bl7ck0ut"
+        }
+    }
+    </script>
+
+
+<meta name="generator" content="Hugo 0.155.3">
+
+    
+    <meta property="og:url" content="https://bl7ck0ut.github.io/posts/payload-rich-header/">
+  <meta property="og:site_name" content="bl7ck0ut">
+  <meta property="og:title" content="Payload Placement in the Rich Header & its Execution">
+  <meta property="og:description" content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-02-25T21:39:50+05:30">
+    <meta property="article:modified_time" content="2026-02-25T21:39:50+05:30">
+    <meta property="article:tag" content="Malware Development">
+    <meta property="article:tag" content="Windows Internals">
+    <meta property="article:tag" content="Security Research">
+
+
+    
+    
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Payload Placement in the Rich Header & its Execution">
+  <meta name="twitter:description" content="An in-depth research of abusing the PE Rich Header as a shellcode staging area, header reconstruction, checksum recalculation, section realignment, and in-memory execution without modifying the entry point or adding new sections.">
+
+
+    
+
+    <link rel="canonical" href="https://bl7ck0ut.github.io/posts/payload-rich-header/">
+    <link href="/style.min.2d921c18cf1ec555ffc03d59a8adc211c402c68c930c27d6a0c306ab175a8d09.css" rel="stylesheet">
+    <link href="/code-highlight.min.706d31975fec544a864cb7f0d847a73ea55ca1df91bf495fd12a177138d807cf.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/css/custom.css">
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+<link rel="manifest" href="https://bl7ck0ut.github.io/site.webmanifest">
+
+<meta name="msapplication-config" content="/browserconfig.xml">
+<meta name="msapplication-TileColor" content="#2d89ef">
+<meta name="theme-color" content="#434648">
+    <meta name="color-scheme" content="light dark">
+
+    
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+
+    
+    
+    
+</head>
+<body data-theme = "light" class="notransition">
+
+<script src="/js/theme.min.8961c317c5b88b953fe27525839672c9343f1058ab044696ca225656c8ba2ab0.js" integrity="sha256-iWHDF8W4i5U/4nUlg5ZyyTQ/EFirBEaWyiJWVsi6KrA="></script>
+
+<div class="navbar" role="navigation">
+    <nav class="menu" aria-label="Main Navigation">
+        <a href="https://bl7ck0ut.github.io/" class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" 
+viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" 
+stroke-linejoin="round" class="feather feather-home">
+<title></title>
+<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+<polyline points="9 22 9 12 15 12 15 22"></polyline>
+</svg>
+        </a>
+        <input type="checkbox" id="menu-trigger" class="menu-trigger" />
+        <label for="menu-trigger">
+            <span class="menu-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" stroke="currentColor" fill="none" viewBox="0 0 14 14"><title>Menu</title><path stroke-linecap="round" stroke-linejoin="round" d="M10.595 7L3.40726 7"></path><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 3.51488L3.49301 3.51488"></path><path stroke-linecap="round" stroke-linejoin="round" d="M10.5096 10.4851H3.49301"></path><path stroke-linecap="round" stroke-linejoin="round" d="M0.5 12.5V1.5C0.5 0.947715 0.947715 0.5 1.5 0.5H12.5C13.0523 0.5 13.5 0.947715 13.5 1.5V12.5C13.5 13.0523 13.0523 13.5 12.5 13.5H1.5C0.947715 13.5 0.5 13.0523 0.5 12.5Z"></path></svg>
+            </span>
+        </label>
+
+        <div class="trigger">
+            <ul class="trigger-container">
+                
+                
+                <li>
+                    <a class="menu-link " href="/">
+                        Home
+                    </a>
+                    
+                </li>
+                
+                <li>
+                    <a class="menu-link active" href="/posts/">
+                        Posts
+                    </a>
+                    
+                </li>
+                
+                <li>
+                    <a class="menu-link " href="/pages/about/">
+                        About
+                    </a>
+                    
+                </li>
+                
+                <li class="menu-separator">
+                    <span>|</span>
+                </li>
+                
+                
+            </ul>
+            <a id="mode" href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mode-sunny" width="21" height="21" viewBox="0 0 14 14" stroke-width="1">
+<title>LIGHT</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="mode-moon" width="21" height="21" viewBox="0 0 14 14" stroke-width="1">
+<title>DARK</title><g><circle cx="7" cy="7" r="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></circle><line x1="7" y1="0.5" x2="7" y2="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="2.4" x2="3.82" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="0.5" y1="7" x2="2.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="2.4" y1="11.6" x2="3.82" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="7" y1="13.5" x2="7" y2="11.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="11.6" x2="10.18" y2="10.18" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="13.5" y1="7" x2="11.5" y2="7" fill="none" stroke-linecap="round" stroke-linejoin="round"></line><line x1="11.6" y1="2.4" x2="10.18" y2="3.82" fill="none" stroke-linecap="round" stroke-linejoin="round"></line></g></svg>
+            </a>
+        </div>
+    </nav>
+</div>
+
+<div class="wrapper post">
+    <main class="page-content" aria-label="Content">
+        <article>
+            <header class="header">
+                <h1 class="header-title">Payload Placement in the Rich Header &amp; its Execution</h1>
+                
+                
+                
+                <div class="post-meta">
+                    <time datetime="2026-02-25T21:39:50&#43;05:30" itemprop="datePublished"> Feb 25, 2026 </time>
+                </div>
+                
+                
+                <style>
+                   
+                  .post-tags {
+                    margin: 20px 0;
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    gap: 8px;
+                  }
+                  
+                   
+                   
+                  
+                   
+                  .post-tags span {
+                    font-size: 0.9rem;
+                    font-weight: bold;
+                    margin-right: 5px;
+                    color: #000000 !important;  
+                    opacity: 1 !important;
+                  }
+
+                   
+                  .post-tags a {
+                    display: inline-block !important;
+                    text-decoration: none !important;
+                    padding: 2px 8px !important;
+                    border-radius: 4px !important;
+                    font-size: 0.75rem !important;
+                    font-weight: normal !important;
+                    line-height: 1.2 !important;
+                    transition: all 0.2s ease;
+                    
+                     
+                    color: #000000 !important;        
+                    border: 1px solid #000000 !important;  
+                    background: transparent !important;    
+                  }
+
+                   
+                  .post-tags a:hover {
+                    background-color: #000000 !important;  
+                    color: #ffffff !important;             
+                  }
+
+                   
+                   
+                  
+                  html.dark .post-tags span {
+                    color: #cccccc !important;
+                  }
+
+                  html.dark .post-tags a {
+                    color: #ffffff !important;        
+                    border: 1px solid #ffffff !important;  
+                  }
+
+                  html.dark .post-tags a:hover {
+                    background-color: #ffffff !important;  
+                    color: #000000 !important;             
+                  }
+                </style>
+
+                
+                <div class="post-tags">
+                    <span>Tags:</span>
+                    
+                    <a href="https://bl7ck0ut.github.io/tags/malware-development/">Malware Development</a>
+                    
+                    <a href="https://bl7ck0ut.github.io/tags/windows-internals/">Windows Internals</a>
+                    
+                    <a href="https://bl7ck0ut.github.io/tags/security-research/">Security Research</a>
+                    
+                </div>
+                
+
+            </header>
+            
+    
+    <details class="toc" ZgotmplZ>
+        <summary><b></b></summary>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#what-is-the-rich-header">What is the Rich Header?</a></li>
+    <li><a href="#key-observations--the-goal">Key Observations &amp; The Goal</a></li>
+    <li><a href="#inside-the-custom-loader">Inside The Custom Loader</a></li>
+    <li><a href="#shellcode-injection--file-alignment">Shellcode Injection &amp; File Alignment</a></li>
+    <li><a href="#cross-comparison">Cross Comparison</a>
+      <ul>
+        <li><a href="#observations">Observations</a></li>
+      </ul>
+    </li>
+    <li><a href="#execution">Execution</a></li>
+    <li><a href="#bypassing-security-controls">Bypassing Security Controls?</a></li>
+    <li><a href="#so-how-to-hunt-it">So How to Hunt It?</a></li>
+    <li><a href="#conclusion-the-threat-actor-advantage">Conclusion: The Threat Actor Advantage</a></li>
+  </ul>
+</nav>
+    </details>
+            <div class="page-content">
+                <h2 id="introduction">Introduction</h2>
+<p>In the world of malware development and threat engineering, payload placement is a foundational element of evasion. At its core, payload placement is all about concealing shellcode or malicious configuration data within a host executable, allowing it to remain dormant until it is dynamically extracted and executed at runtime. The primary objective is stealth &amp; slipping past the static signatures and heuristic checks of modern security controls. Historically, malware authors have staged these payloads within the well-documented boundaries of the Portable Executable (PE) format, staging their code in standard sections like <code>.text</code>, <code>.data</code>, or <code>.rsrc</code>, or occasionally appending entirely new sections specifically to store the payload.<br><br><a href="https://securelist.com/the-devils-in-the-rich-header/84348/">Kaspersky&rsquo;s report</a> on 2018 Olympic Destroyer malware shows that a threat actor deliberately modified and tampered the Rich Header to cause misattribution and complicate forensic analysis. So my question after reading this report was - can it be used for something else?<br><br>Maybe a place to hide shellcode? <p>In this blog, I will discuss the Rich header, the information it contains, and what it looks like. I will then present my proof of concept (PoC), demonstrating how I used the Rich header as a staging area for shellcode and, during runtime, retrieved the shellcode from the Rich header, loaded it into memory, and executed it. So, let’s begin!</p>
+<h2 id="what-is-the-rich-header">What is the Rich Header?</h2>
+<p>The Rich Header is essentially an undocumented part of the Portable Executable (PE) file format. It is exclusively an artifact of the <strong>Microsoft Visual Studio toolchain</strong>. The Rich Header is a block of data inserted by the linker that records the build environment used to create the executable. So if an executable was built using the Microsoft Visual Studio toolset, it will almost certainly have a Rich Header.<br><br>Rich header lies between the DOS Stub (<code>This program cannot be run in DOS mode</code>) and the start of the NT Headers (<code>PE</code>). I have opened <code>calc.exe</code> in PE Bear below to show what it looks like.</p>
+<figure><img src="/posts/payload-rich-header/1.png"
+    alt="Fig 1: PE Bear hex view shows DOS Stub, Rich Header &amp; NT Headers."><figcaption>
+      <p>Fig 1: PE Bear hex view shows DOS Stub, Rich Header &amp; NT Headers.</p>
+    </figcaption>
+</figure>
+
+<p>The Rich Header contains a chunk of XOR&rsquo;d data which is followed by a signature (<code>Rich</code>) and a 32-bit checksum value which acts as the XOR key. PE Bear parses the rich header &amp; shows us the information automatically as shown below.</p>
+<figure><img src="/posts/payload-rich-header/2.png"
+    alt="Fig 2: Breakdown of the Rich header."><figcaption>
+      <p>Fig 2: Breakdown of the Rich header.</p>
+    </figcaption>
+</figure>
+
+<p>We can breakdown the Rich Header into the following parts -</p>
+<ol>
+<li><strong>DanS ID</strong> - 4 bytes (1 DWORD), <code>0x536E6144</code> (spells &ldquo;<strong>DanS</strong>&rdquo;). This marks the absolute beginning of the Rich Header.</li>
+<li><strong>Checksumed padding</strong> - Typically 12 bytes (3 DWORDs) - each 4-bytes. The start of the Rich Header is padded with zeros (before encryption) to ensure memory alignment.</li>
+<li><strong>Comp ID</strong> - This consists of pairs of DWORD values, where each pair forms a single entry. Each entry contains a tool identifier, its build number, a usage count indicating how many times it was invoked and a potential VS version.</li>
+<li><strong>Rich ID</strong> - <code>0x68636952</code> (which spells &ldquo;Rich&rdquo; in ASCII, read via little-endian). This is the plaintext boundary marker indicating the <strong>end</strong> of the Rich Header.</li>
+<li><strong>Checksum</strong> - It&rsquo;s the XOR key, a DWORD, 4 bytes in size. It functions as an XOR key for the preceding data and acts as a checksum to verify that the DOS header and stub have not been modified. The linker uses this checksum as the XOR key to encrypt the rest of the Rich Header above it.</li>
+</ol>
+<h2 id="key-observations--the-goal">Key Observations &amp; The Goal</h2>
+<ul>
+<li>
+<p>The Windows OS loader relies entirely on the <code>e_lfanew</code> pointer (which holds the offset to the NT Headers) to jump from the DOS Header directly to the NT Headers. Everything in between, including the Rich header, is ignored during the execution phase.</p>
+</li>
+<li>
+<p>The Rich Header is intentionally encrypted. Microsoft natively XOR-encrypts this block using a checksum of the DOS header. Because security tools and endpoint sensors expect this region to contain a cryptographic blob of telemetry data, hiding XOR-encrypted C2 domains, IP addresses, or even shellcode there might allow malware to blend into the expected “noise.”</p>
+</li>
+<li>
+<p><strong>Goal</strong> - Taking into account the two observations above, my goal is to create a weaponized executable that contains shellcode in its Rich header. Once executed, the program would parse its own PE headers at runtime to calculate the necessary offsets and locate the Rich header and the embedded shellcode inside it. It would then decrypt the shellcode, allocate a new memory region, load the shellcode into that region, and execute it.</p>
+</li>
+</ul>
+<h2 id="inside-the-custom-loader">Inside The Custom Loader</h2>
+<p>For the extraction and execution phase, I developed a custom loader in C/C++. To successfully execute the hidden shellcode, the program needs to be self-aware. It cannot rely on hardcoded memory offsets because the Rich Header &ldquo;floats&rdquo; i.e. its exact size and location shifts depending on the compiler version, linker settings, and the size of the DOS stub. To solve this, the custom loader dynamically parses its own PE structure in memory to find the payload. The execution flow looks something like this -</p>
+<ol>
+<li>
+<p><strong>The Backward Slide</strong>: The loader resolves its own Image Base address in memory. It parses the DOS Header to read the <code>e_lfanew</code> pointer, which gives it the exact starting address of the NT Headers. Because we know the Rich Header exists just before this point, the loader begins scanning backwards, byte-by-byte, until it hits the <code>0x68636952</code> (<strong>Rich</strong>) magic bytes.</p>
+</li>
+<li>
+<p><strong>XOR Key Extraction</strong>: As established earlier, the 4 bytes immediately following the Rich signature contains the checksum. The loader extracts this to use as its XOR decryption key.</p>
+</li>
+<li>
+<p><strong>Locating the Boundary</strong>: The loader continues to scan backward in 4-byte (DWORD) chunks, XORing the memory with the extracted key as it goes. It stops the moment the result equals <code>0x536E6144</code> (DanS), marking the absolute beginning of the Rich header. So by now, we know where it starts &amp; ends.</p>
+</li>
+<li>
+<p><strong>The Execution</strong>: Knowing the exact boundaries, the loader calculates the payload size (the space between the 16-byte DanS header (DanS + Checksummed Padding) and the Rich signature). It allocates a new memory segment using VirtualAlloc with PAGE_EXECUTE_READWRITE permissions, XOR-decrypts the payload into this new region, and redirects the instruction pointer to detonate the shellcode.</p>
+</li>
+</ol>
+<h2 id="shellcode-injection--file-alignment">Shellcode Injection &amp; File Alignment</h2>
+<p>Writing a C loader to extract the payload was only half the battle. Getting a weaponized, 276-byte shellcode payload into a <strong>compiled</strong> executable without corrupting it proved to be a significant engineering hurdle.</p>
+<p>You cannot simply append shellcode into the Rich Header space. Modern compilers leave very little zero-padding between the end of the DOS stub and the start of the NT Headers. If the payload is larger than the available gap, injecting it physically pushes the NT Headers, the Section Headers, and the actual raw data (like <code>.text</code> and <code>.data</code>) further down the file on disk.</p>
+<p>If you do this blindly, you trigger a cascading failure. The Windows Loader relies on the <code>PointerToRawData</code> values inside the Section Headers to know exactly where the executable code lives on disk to map it into memory. If you shift the file’s contents but fail to update those pointers, the OS will read garbage bytes instead of the <code>.text</code> section and instantly throw an <code>ERROR_BAD_EXE_FORMAT</code> exception.</p>
+<p>To solve this, I wrote a custom Python builder script that mathematically rebuilds the executable:</p>
+<ol>
+<li>
+<p><strong>Checksum Recalculation</strong>: First, it recalculates the bitwise left-rotation (rol32) checksum against the newly injected shellcode. If this isn&rsquo;t mathematically perfect, PE parsers will flag the header as corrupt.</p>
+</li>
+<li>
+<p><strong>Dynamic Shifting</strong>: It calculates the exact byte-shift required to fit the new payload while maintaining the strict 512-byte file alignment required by Win32 executables.</p>
+</li>
+<li>
+<p><strong>Header Patching</strong>: It iterates through every single Section Header and adds the alignment shift amount to the <code>PointerToRawData</code> fields, ensuring the OS loader can still find the <code>.text</code> section seamlessly. Finally, it updates <code>e_lfanew</code> and the <code>SizeOfHeaders</code> variable to account for the artificially expanded padding.</p>
+</li>
+</ol>
+<h2 id="cross-comparison">Cross Comparison</h2>
+<p>By executing this Python builder against my compiled C/C++ loader, I was able to successfully generate the final, weaponized executable. Upon inspecting the output, the shellcode was properly embedded within the Rich Header. Even though the 276-byte payload exceeded the size of the original compiler data, the dynamic file alignment worked as intended. Below is the comparison of the loader.exe before &amp; after it had shellcode in its rich header.</p>
+<p>For ease, I have mentioned below which file has shellcode &amp; which one doesn&rsquo;t.</p>
+<ul>
+<li><code>loader.exe</code> - No Shellcode</li>
+<li><code>infected_loader.exe</code> - Contains Shellcode <br><br></li>
+</ul>
+<figure><img src="/posts/payload-rich-header/3.png"
+    alt="Fig 3: loader.exe with valid Rich header - No shellcode."><figcaption>
+      <p>Fig 3: loader.exe with valid Rich header - No shellcode.</p>
+    </figcaption>
+</figure>
+
+<p>PE-Bear shows the <code>loader.exe</code>&rsquo;s rich header containing valid compiler data, ProductId, BuildId &amp; count as we discussed earlier.</p>
+<p>The screenshot below shows <code>infected_loader</code>.exe, in which the compiler metadata has been replaced with shellcode. The file has also been realigned to accommodate the increased size of the embedded shellcode.</p>
+<figure><img src="/posts/payload-rich-header/4.png"
+    alt="Fig 4: infected_loader.exe contains shellcode."><figcaption>
+      <p>Fig 4: infected_loader.exe contains shellcode.</p>
+    </figcaption>
+</figure>
+
+<figure><img src="/posts/payload-rich-header/5.png"
+    alt="Fig 5: infected_loader.exe - Rich Hdr"><figcaption>
+      <p>Fig 5: infected_loader.exe - Rich Hdr</p>
+    </figcaption>
+</figure>
+
+<h3 id="observations">Observations</h3>
+<ol>
+<li>Shellcode has successfully been injected into the Rich header and as the shellcode is visibly larger than the previous compiler gap, injecting it physically pushed the NT Headers, the Section Headers, and the actual raw data (like <code>.text</code> and <code>.data</code>) further down the file on disk. So the python file has successfully realigned the file and recalculated the necessary offsets and the other required data to put back the file.</li>
+<li>Shellcode is placed after the 16-bytes DanS signature (DanS ID + 3 Checksummed Padding) and resides between the DanS offset and the &ldquo;Rich&rdquo; signature (Rich ID).</li>
+<li>The shellcode is currently XOR&rsquo;d using the checksum value that we discussed earlier.</li>
+</ol>
+<h2 id="execution">Execution</h2>
+<p>The execution of the shellcode was highly successful. The python script successfully weaponized a clean binary, and upon execution, the loader cleanly decoupled the shellcode from the padding and executed it purely in memory.</p>
+<figure><img src="/posts/payload-rich-header/6.gif"
+    alt="Gif : Execution of the infected_loader.exe, shellcode popping up calc."><figcaption>
+      <p>Gif : Execution of the infected_loader.exe, shellcode popping up calc.</p>
+    </figcaption>
+</figure>
+
+<p>From an evasion standpoint, this technique creates a massive blind spot. Because the payload is wrapped in the native Microsoft XOR checksum, signature-scanning for C2 domains or shellcode patterns on disk will yield nothing. Furthermore, no additional sections are created in the PE file &amp; the <code>.text</code> and <code>.rdata</code> sections remain completely unmodified, meaning static heuristics evaluating the program&rsquo;s primary logic will see a benign application.</p>
+<h2 id="bypassing-security-controls">Bypassing Security Controls?</h2>
+<p>To validate the stealth of this technique, I put the final weaponized executable through a standard malware triage process to see how modern security controls would react to it.</p>
+<p>First, I tested it against static antivirus engines. I dropped the infected binary onto a fully updated Windows machine with Microsoft Defender active. Defender did not flag the file upon writing it to disk, nor did it intervene during execution. Because the <code>.text</code> and <code>.data</code> sections of our C/C++ loader are entirely benign, and the actual shellcode is buried inside an unmonitored metadata gap, the AV engine had no malicious code signatures to trigger on within the standard execution flow.</p>
+<p>Next, I analyzed the binary using standard static analysis tools, specifically strings and Mandiant’s FLOSS (FireEye Labs Obfuscated String Solver).</p>
+<p>When triaging suspected LotL (Living off the Land) binaries, analysts heavily rely on FLOSS to automatically deobfuscate hidden strings or C2 configurations. However, both strings and FLOSS returned completely clean results. Neither tool detected the calc.exe payload or flagged any anomalous indicators tied to the Rich Header.</p>
+<p>This happens for two reasons:</p>
+<ol>
+<li>The shellcode consists of raw assembly opcodes, not standard ASCII or UTF-16 strings.</li>
+<li>The payload is cryptographically wrapped in Microsoft&rsquo;s native rol32 XOR checksum.</li>
+</ol>
+<p>To these heuristic tools, the weaponized padding space didn&rsquo;t look like a staged payload; it simply looked like standard compiler telemetry noise. The binary had successfully achieved complete static evasion.</p>
+<h2 id="so-how-to-hunt-it">So How to Hunt It?</h2>
+<p>To detect this, defenders must shift their focus from traditional byte signatures to structural anomalies.</p>
+<p>In a standard, benign executable compiled with Visual Studio, the distance from the start of the file to the NT Headers (<code>e_lfanew</code>) rarely exceeds <code>0xE0</code> to <code>0x110</code> bytes. If a threat actor injects a massive payload into the Rich Header, this padding must be artificially expanded. If you encounter a binary where <code>e_lfanew</code> is greater than <code>0x150</code> (336 bytes), it is a glaring structural anomaly. This can always be tuned with more experimentation with the size of the padding.</p>
+<p>We can operationalize this hunt by writing a YARA rule that targets this exact architectural deviation. You can find the YARA rule here on my <a href="https://github.com/bl7ck0ut/YARA-Rules/blob/main/abnormal_rich_header.yara">github repo</a>. But here&rsquo;s the break down of the logic behind this detection:</p>
+<ol>
+<li>
+<p><code>(uint16(0) == 0x5a4d)</code> : This simply ensures the scanner is only evaluating valid Windows executables starting with the MZ DOS signature.</p>
+</li>
+<li>
+<p><code>(uint32(0x3c) &gt; 0x150)</code> : This is the core of our YARA rule. By checking the 32-bit integer at offset 0x3C (<code>e_lfanew</code>), we immediately know how far down the file the NT Headers start. Since a standard MSVC DOS stub plus its Rich Header rarely exceeds 256 to 288 bytes, a value jumping past 0x150 is a mathematical indicator that the padding gap was inflated to conceal a payload.</p>
+</li>
+<li>
+<p><code>(for any i in...)</code> : To avoid false positives with non-MSVC binaries that might just have strangely formatted headers, we verify the presence of the Rich Header. We strictly bound the search loop to only check the padding between the end of the standard DOS Header (<code>0x40</code>) and the start of the NT Headers (<code>e_lfanew</code>). By looking for the hex value <code>0x68636952</code> (&quot;<strong>Rich</strong>&quot; in little-endian), we keep the rule highly performant while accurately zeroing in on weaponized padding space.</p>
+</li>
+</ol>
+<h2 id="conclusion-the-threat-actor-advantage">Conclusion: The Threat Actor Advantage</h2>
+<p>The Rich Header represents a structural blind spot that mature threat groups can easily weaponize to bypass modern security controls. By moving payloads out of highly scrutinized areas like the <code>.text</code> or <code>.rsrc</code> sections and into undocumented compiler padding, attackers gain several distinct tactical advantages:</p>
+<ul>
+<li>
+<p><strong>Decoupled Loaders and LotL Attacks</strong>: Threat actors can drop a completely benign, perhaps even digitally signed, executable onto the disk. Because the executable code itself is clean, static AV engines will likely ignore it. The actual execution is triggered by a secondary Living-off-the-Land (LotL) script—like PowerShell or a heavily obfuscated macro—that simply reads the benign executable from disk, extracts the XORed shellcode from the Rich Header, and injects it into a target process. This breaks the execution chain; the script contains no payload, and the executable contains no malicious logic.</p>
+</li>
+<li>
+<p><strong>Stealthy C2 Configuration Storage</strong>: Shellcode isn&rsquo;t the only thing that can be hidden here. Advanced malware frequently needs to store Command and Control (C2) IP addresses, domain generation algorithm (DGA) seeds, or RC4 decryption keys. Hardcoding these in the .data section makes them trivial to extract. By formatting configuration data into 8-byte chunks and burying it in the Rich Header under the native Microsoft XOR checksum, the strings are completely destroyed on disk, blending perfectly into the expected compiler telemetry noise.</p>
+</li>
+</ul>
+<p>As threat researchers, this technique serves as a stark reminder that we cannot solely rely on the Windows OS loader’s interpretation of a file. Attackers will constantly look for the &ldquo;dead zones&rdquo; in our visibility. If there is an undocumented gap in the PE format, it is only a matter of time before it is actively exploited in the wild.</p>
+<p>Maybe in the next blog, we can perform both static and dynamic analysis of this executable and use a debugger to uncover more interesting aspects of its behavior.</p>
+<p>That&rsquo;ll be all for today. Kudos to you if you have stuck around till the end!</p>
+
+            </div>
+        </article></main>
+</div>
+<footer class="footer">
+    <span class="footer_item"> </span>
+    &nbsp;
+
+    <div class="footer_social-icons">
+<a href="https://github.com/bl7ck0ut" target="_blank" rel="noopener noreferrer me"
+    title="Github">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path
+        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+    </path>
+</svg>
+</a>
+<a href="https://linkedin.com/in/bhaveshkumarlohar" target="_blank" rel="noopener noreferrer me"
+    title="Linkedin">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+    <rect x="2" y="9" width="4" height="12"></rect>
+    <circle cx="4" cy="4" r="2"></circle>
+</svg>
+</a>
+<a href="https://bl7ck0ut.medium.com" target="_blank" rel="noopener noreferrer me"
+    title="Medium">
+    <svg version="1.0" xmlns="http://www.w3.org/2000/svg" fill="currentColor" stroke-width="2"
+    viewBox="0 0 76.000000 76.000000" preserveAspectRatio="xMidYMid meet">
+    <g transform="translate(0.000000,76.000000) scale(0.100000,-0.100000)">
+        <path
+            d="M0 380 l0 -380 380 0 380 0 0 380 0 380 -380 0 -380 0 0 -380z m334 85 c30 -63 57 -115 59 -115 2 0 16 30 31 68 15 37 37 88 49 115 l20 47 76 0 76 -1 -27 -20 -28 -21 0 -151 c0 -150 0 -151 27 -179 l27 -28 -109 0 -109 0 27 28 c26 27 27 32 26 143 0 131 3 134 -71 -58 -24 -62 -48 -113 -53 -113 -6 0 -17 16 -24 35 -7 19 -36 83 -64 142 l-52 108 -3 -98 c-3 -97 -2 -99 28 -133 16 -19 30 -39 30 -44 0 -6 -31 -10 -70 -10 -45 0 -70 4 -70 11 0 6 14 27 30 46 30 33 30 35 30 151 0 116 0 118 -31 155 l-30 37 75 0 76 0 54 -115z" />
+    </g>
+</svg>
+</a>
+</div>
+    <small class="footer_copyright">
+        © 2026 Bhavesh Lohar.
+        
+    </small>
+</footer><a href="#" title="" id="totop">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" stroke="currentColor" viewBox="0 96 960 960">
+    <path d="M283 704.739 234.261 656 480 410.261 725.739 656 677 704.739l-197-197-197 197Z"/>
+</svg>
+
+</a><script>
+document.addEventListener('DOMContentLoaded', function() {
+  
+  const element = document.querySelector('.author-bio');
+  
+  
+  if (element) {
+    
+    const text = element.innerText; 
+    element.innerText = ''; 
+    
+    
+    element.classList.add('typing-cursor'); 
+    
+    let i = 0;
+    
+    
+    function typeWriter() {
+      if (i < text.length) {
+        
+        element.textContent += text.charAt(i);
+        i++;
+        
+        
+        setTimeout(typeWriter, 50); 
+      } else {
+        
+        
+      }
+    }
+    
+    
+    typeWriter();
+  }
+});
+</script>
+
+
+    
+
+
+
+
+    
+    
+        
+    
+
+    
+    
+        
+    
+
+
+
+    
+    <script src="https://bl7ck0ut.github.io/js/main.min.35f435a5d8eac613c52daa28d8af544a4512337d3e95236e4a4978417b8dcb2f.js" integrity="sha256-NfQ1pdjqxhPFLaoo2K9USkUSM30&#43;lSNuSkl4QXuNyy8="></script>
+
+    
+
+</body>
+</html>

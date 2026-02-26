@@ -1,1 +1,33 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Categories on bl7ck0ut</title><link>https://bl7ck0ut.github.io/categories/</link><description>Recent content in Categories on bl7ck0ut</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 25 Feb 2026 21:39:50 +0530</lastBuildDate><atom:link href="https://bl7ck0ut.github.io/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>Malware Development</title><link>https://bl7ck0ut.github.io/categories/malware-development/</link><pubDate>Wed, 25 Feb 2026 21:39:50 +0530</pubDate><guid>https://bl7ck0ut.github.io/categories/malware-development/</guid><description/></item><item><title>Malware Research</title><link>https://bl7ck0ut.github.io/categories/malware-research/</link><pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate><guid>https://bl7ck0ut.github.io/categories/malware-research/</guid><description/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on bl7ck0ut</title>
+    <link>https://bl7ck0ut.github.io/categories/</link>
+    <description>Recent content in Categories on bl7ck0ut</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 25 Feb 2026 21:39:50 +0530</lastBuildDate><atom:link href="https://bl7ck0ut.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Malware Development</title>
+      <link>https://bl7ck0ut.github.io/categories/malware-development/</link>
+      <pubDate>Wed, 25 Feb 2026 21:39:50 +0530</pubDate>
+      
+      <guid>https://bl7ck0ut.github.io/categories/malware-development/</guid>
+      
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>Malware Research</title>
+      <link>https://bl7ck0ut.github.io/categories/malware-research/</link>
+      <pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate>
+      
+      <guid>https://bl7ck0ut.github.io/categories/malware-research/</guid>
+      
+      <description></description>
+      
+    </item>
+    
+  </channel>
+</rss>

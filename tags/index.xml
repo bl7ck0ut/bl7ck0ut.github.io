@@ -1,1 +1,88 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tags on bl7ck0ut</title><link>https://bl7ck0ut.github.io/tags/</link><description>Recent content in Tags on bl7ck0ut</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 25 Feb 2026 21:39:50 +0530</lastBuildDate><atom:link href="https://bl7ck0ut.github.io/tags/index.xml" rel="self" type="application/rss+xml"/><item><title>Malware Development</title><link>https://bl7ck0ut.github.io/tags/malware-development/</link><pubDate>Wed, 25 Feb 2026 21:39:50 +0530</pubDate><guid>https://bl7ck0ut.github.io/tags/malware-development/</guid><description/></item><item><title>Security Research</title><link>https://bl7ck0ut.github.io/tags/security-research/</link><pubDate>Wed, 25 Feb 2026 21:39:50 +0530</pubDate><guid>https://bl7ck0ut.github.io/tags/security-research/</guid><description/></item><item><title>Windows Internals</title><link>https://bl7ck0ut.github.io/tags/windows-internals/</link><pubDate>Wed, 25 Feb 2026 21:39:50 +0530</pubDate><guid>https://bl7ck0ut.github.io/tags/windows-internals/</guid><description/></item><item><title>Malware Analysis</title><link>https://bl7ck0ut.github.io/tags/malware-analysis/</link><pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate><guid>https://bl7ck0ut.github.io/tags/malware-analysis/</guid><description/></item><item><title>Reversing</title><link>https://bl7ck0ut.github.io/tags/reversing/</link><pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate><guid>https://bl7ck0ut.github.io/tags/reversing/</guid><description/></item><item><title>Unpacking</title><link>https://bl7ck0ut.github.io/tags/unpacking/</link><pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate><guid>https://bl7ck0ut.github.io/tags/unpacking/</guid><description/></item><item><title>Ursnif</title><link>https://bl7ck0ut.github.io/tags/ursnif/</link><pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate><guid>https://bl7ck0ut.github.io/tags/ursnif/</guid><description/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on bl7ck0ut</title>
+    <link>https://bl7ck0ut.github.io/tags/</link>
+    <description>Recent content in Tags on bl7ck0ut</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 25 Feb 2026 21:39:50 +0530</lastBuildDate><atom:link href="https://bl7ck0ut.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Malware Development</title>
+      <link>https://bl7ck0ut.github.io/tags/malware-development/</link>
+      <pubDate>Wed, 25 Feb 2026 21:39:50 +0530</pubDate>
+      
+      <guid>https://bl7ck0ut.github.io/tags/malware-development/</guid>
+      
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>Security Research</title>
+      <link>https://bl7ck0ut.github.io/tags/security-research/</link>
+      <pubDate>Wed, 25 Feb 2026 21:39:50 +0530</pubDate>
+      
+      <guid>https://bl7ck0ut.github.io/tags/security-research/</guid>
+      
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>Windows Internals</title>
+      <link>https://bl7ck0ut.github.io/tags/windows-internals/</link>
+      <pubDate>Wed, 25 Feb 2026 21:39:50 +0530</pubDate>
+      
+      <guid>https://bl7ck0ut.github.io/tags/windows-internals/</guid>
+      
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>Malware Analysis</title>
+      <link>https://bl7ck0ut.github.io/tags/malware-analysis/</link>
+      <pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate>
+      
+      <guid>https://bl7ck0ut.github.io/tags/malware-analysis/</guid>
+      
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>Reversing</title>
+      <link>https://bl7ck0ut.github.io/tags/reversing/</link>
+      <pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate>
+      
+      <guid>https://bl7ck0ut.github.io/tags/reversing/</guid>
+      
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>Unpacking</title>
+      <link>https://bl7ck0ut.github.io/tags/unpacking/</link>
+      <pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate>
+      
+      <guid>https://bl7ck0ut.github.io/tags/unpacking/</guid>
+      
+      <description></description>
+      
+    </item>
+    
+    <item>
+      <title>Ursnif</title>
+      <link>https://bl7ck0ut.github.io/tags/ursnif/</link>
+      <pubDate>Thu, 12 Feb 2026 09:39:50 +0530</pubDate>
+      
+      <guid>https://bl7ck0ut.github.io/tags/ursnif/</guid>
+      
+      <description></description>
+      
+    </item>
+    
+  </channel>
+</rss>
