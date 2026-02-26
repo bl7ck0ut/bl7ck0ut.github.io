@@ -1,0 +1,175 @@
+/* Updated contents for static/css/custom.css */
+/* Target the specific classes used by hugo-blog-awesome */
+
+/*.author .author-avatar { */
+    /* Use !important to ensure we override the theme's compiled SCSS */
+    /* width: 200px !important;  /* Set to your desired size */
+  /*  height: 200px !important; Keep height equal to width for a circle */
+    
+    /* The theme usually handles border-radius, but we can ensure it stays circular */
+    /* border-radius: 50%;
+} */
+
+/* Optional: Adjust for smaller mobile screens so it doesn't take up too much space */
+/* @media (max-width: 768px) {
+    .author .author-avatar {
+        width: 150px !important;
+        height: 150px !important;
+    }
+} */
+
+/* --- 1. Base Styles (LIGHT MODE) --- */
+.author .author-avatar {
+    /* Existing Size & Shape */
+    width: 200px !important;
+    height: 200px !important;
+    border-radius: 50%;
+    
+    /* NEW: Dark Border for Light Mode */
+    border: 3px solid #69b5de; 
+    
+    /* Animation Setup */
+    transition: transform 0.3s ease-in-out, border-color 0.3s ease;
+}
+
+/* --- 2. Dark Mode Override --- */
+html.dark .author .author-avatar {
+    /* NEW: White Border for Dark Mode */
+    border-color: #efe9e9;
+}
+
+/* --- 3. Hover Effect (Zoom) --- */
+.author .author-avatar:hover {
+    transform: scale(1.1);
+    /* Optional: Add a shadow when hovering to make it lift up */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* --- 4. Mobile Adjustments --- */
+@media (max-width: 768px) {
+    .author .author-avatar {
+        width: 150px !important;
+        height: 150px !important;
+        border-width: 3px; /* Slightly thinner border on mobile */
+    }
+}
+
+/* 1. Target links (a) and buttons in the navbar */
+.navbar a:active, 
+.navbar button:active,
+.navbar a:focus, 
+.navbar button:focus {
+    
+    /* Removes the border/outline box */
+    outline: none !important;
+    border: none !important;
+
+    /* Removes the solid blue square background */
+    background-color: transparent !important;
+
+    /* Optional: Keeps the text color normal (instead of turning blue) */
+    color: inherit !important; 
+}
+
+
+/* 1. Container for the text (No border, no animation here) */
+.author-bio {
+  display: inline-block;
+  /* overflow: hidden;  <-- REMOVE THIS (Not needed for JS method) */
+  /* border-right: ...  <-- REMOVE THIS (This was Cursor #1) */
+  /* white-space: ...   <-- REMOVE THIS (Let text wrap naturally) */
+  margin: 0 auto;
+  
+  /* IMPORTANT: Remove the old 'animation' property entirely */
+}
+
+/* 2. The cursor (This is Cursor #2, the one we want) */
+/* 1. Base Cursor Shape & Animation (Shared by both modes) */
+.typing-cursor::after {
+  content: '';
+  display: inline-block;
+  width: 2px;             /* Width of cursor */
+  height: 1.2em;          /* Height relative to font size */
+  margin-left: 2px;       /* Gap between text and cursor */
+  vertical-align: text-bottom;
+  animation: blink 1s step-start infinite;
+}
+
+/* 2. Light Mode Color (Default) */
+.typing-cursor::after {
+  background-color: black; 
+}
+
+/* 3. Dark Mode Color (Override) */
+html.dark .typing-cursor::after {
+  background-color: white;
+}
+
+/* 4. The Animation Keyframes */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* --- 1. LIGHT MODE (Suggestion: Soft Brand Blue) --- */
+/* This matches your #5292ff accent but is much lighter for readability */
+::selection {
+  background: #b7babb;  /* A soft, icy blue */
+  color: #0d122b;       /* Your existing dark navy text */
+}
+
+/* Firefox backup (sometimes needed) */
+::-moz-selection {
+  background: #b7babb;
+  color: #0d122b;
+}
+
+/* --- 2. DARK MODE (User Request: White) --- */
+html.dark ::selection {
+  background: #ffffff;  /* Pure white background */
+  color: #000000;       /* IMPORTANT: Text must be black to be readable */
+}
+
+html.dark ::-moz-selection {
+  background: #ffffff;
+  color: #000000;
+}
+
+/* Adding 'body' makes this rule stronger than the theme's default */
+body .wrapper.post,
+body .wrapper.list-page,
+body .list-page,
+body:has(.wrapper.post) .navbar,
+body:has(.wrapper.list-page) .navbar,
+body:has(.list-page) .navbar {
+    max-width: -webkit-calc(1000px - (30px * 2)) !important;
+    max-width: calc(1000px - (30px * 2)) !important;
+}
+
+/* Inject "Recent Posts" text into the empty header */
+.posts-item-note::before {
+    content: "Recent Posts"; /* Alternatively, use: content: attr(aria-label); */
+    display: block;   /* Adds space between the title and the first post */
+    font-size: 1.5rem;       /* Adjust size to your liking */
+    font-weight: 700;        /* Makes it bold */
+}
+
+/* --- OVERRIDE LIGHT MODE BACKGROUND --- */
+html:not(.dark) body {
+    /* Changes the background from pure white to a softer off-white/light gray */
+    background-color: #dce4ec !important; 
+}
+
+/* Optional: Soften the pure black text to dark gray for even better readability */
+html:not(.dark) .page-content {
+    color: #2c313a !important; 
+}
+
+/* Style inline code snippets (text wrapped in single backticks) */
+.page-content :not(pre) > code {
+    background-color: #282c34 !important; /* A sleek dark grey background */
+    color: #e5c07b !important;            /* A soft yellow/gold text that pops against the dark */
+    padding: 0.2em 0.4em !important;      /* Adds breathing room around the text */
+    border-radius: 4px !important;        /* Smooths out the corners */
+    font-size: 0.85em !important;         /* Keeps it proportionate to the paragraph text */
+    word-break: break-word !important;    /* Prevents long strings from breaking your layout */
+}
